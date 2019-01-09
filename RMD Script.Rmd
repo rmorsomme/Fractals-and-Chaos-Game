@@ -3,9 +3,9 @@ title: "Fractals - Choas Game"
 author: "Raphaël Morsomme"
 date: "November 15, 2018"
 output:
-  github_document
+  github_document:
+    toc: TRUE
 ---
-
 
 ```{r, message = F}
 library(tidyverse)

@@ -3,6 +3,21 @@ Fractals - Choas Game
 Raphaël Morsomme
 November 15, 2018
 
+-   [Introduction](#introduction)
+    -   [Fractals](#fractals)
+    -   [The Choas Game](#the-choas-game)
+    -   [Outline of Script](#outline-of-script)
+-   [Sierpinski Gasket and Other Triangular Fractals](#sierpinski-gasket-and-other-triangular-fractals)
+    -   [The Function](#the-function)
+    -   [Other Triangular Fractals](#other-triangular-fractals)
+-   [General Formula](#general-formula)
+    -   [The Function](#the-function-1)
+    -   [Experimenting](#experimenting)
+-   [Bonus: Barnsley Fern](#bonus-barnsley-fern)
+    -   [The Function](#the-function-2)
+    -   [Experimenting](#experimenting-1)
+-   [Summary](#summary)
+
 ``` r
 library(tidyverse)
 ```
