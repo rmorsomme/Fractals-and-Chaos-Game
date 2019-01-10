@@ -1,7 +1,7 @@
 Fractals - Choas Game
 ================
 Raphaël Morsomme
-November 15, 2018
+\`r Sys.Date()
 
 -   [Introduction](#introduction)
     -   [Fractals](#fractals)
@@ -25,30 +25,31 @@ library(tidyverse)
 Introduction
 ============
 
-In this script, I implement a recursive method to generate fractals, which is called the *chaos game*. I decided to write this script after watching a tutorial video by Numberphile on the topic. I found the chaos game fascinating and wanted to implement it on `R Studio`. I also wanted to generalize the method presented in the tutorial to other types of fractals.
+In this script, I implement the so-called *choas game* to generate fractals. I decided to write this script after watching a tutorial video by Numberphile on the topic. I found the chaos game fascinating and wanted to implement it on R Studio. I also wanted to generalize this method to be able to generate other types of fractals.
 
 Fractals
 --------
 
-Fractals are complex mathematical objects. In this script, it is sufficient to understand them as geometric figures whose parts are reduced-size copies of the whole. That is, given a fractal, if we zoom in on any of its parts, we find the exact same patterns as in the original figure, no matter how small the part is. One of the most famous fractals in mathematics is the Sierpinski Triangle (see Figure 1.).
+Fractals are complex mathematical objects. In this script, it is sufficient to understand them as geometric figures whose parts are reduced-size copies of the whole. That is, given a fractal, if we zoom in on any part, we find the exact same patterns as in the original figure, no matter how much we zoom in. One of the most famous fractals in mathematics is the Sierpinski Triangle.
 
-![Sierpinski Gasket](Sierpinski%20Gasket.jpeg)
-
+<center>
+<img src="Sierpinski%20Gasket.jpeg" alt="Sierpinski Gasket" width="250" />
+</center>
 The Choas Game
 --------------
 
-The 8-minute tutorial *Chaos Game* by Numberphile[1] does a much better job at explaining the choas game than I could possibly do, so I recommend the reader to simply watch it to understand its mechanism. Depending on the desired fractal, the method slightly changes. For the Sierpinski Gasket, it follows 5 steps:
+The 8-minute <https://www.youtube.com/watch?v=kbKtFN71Lfs>\[tutorial *Chaos Game* by Numberphile\] does a much better job at explaining the choas game than I could possibly do, so I recommend the reader to simply watch it to understand how the method works. To generate the Sierpinski Gasket with the chaos game, we follow 5 steps:
 
 1.  Take three points in a plane. These will be the vertices of the final fractal.
-2.  Choose a point in the plane and draw it. This is the current point.
-3.  Randomly choose a vertex. This is the the chosen vertex.
-4.  Find the point half distance between the current point and the chosen vertex. Draw the point. This point is now the current point.
+2.  Choose a point in the plane and draw it.
+3.  Randomly choose a vertex.
+4.  Draw the point half distance between the current point and the chosen vertex.
 5.  Repeat from step 3.
 
 Outline of Script
 -----------------
 
-I kick off this script with a well-know fractal: Sierpinski Gasket. I write a function that generates it and then experiment with the parameters to vary the shape of and the pattern in the obtained fractal. I then generalize the function to generate fractals with any number of vertices before finishing the script with an adaptation of the chaos game that generates Barnsley Fern, another beautiful fractal.
+I kick off this script with a well-know fractal: the Sierpinski Gasket. I write a function that uses the chaos game to generate it and then experiment with the parameters to vary the shape of and the patterns in the obtained fractal. I then generalize the function to generate fractals with any number of vertices before finishing the script with an adaptation of the chaos game that generates Barnsley Fern, another beautiful fractal.
 
 Sierpinski Gasket and Other Triangular Fractals
 ===============================================
@@ -56,13 +57,13 @@ Sierpinski Gasket and Other Triangular Fractals
 The Function
 ------------
 
-We design a function `generate_sg` that uses the chaos game method to generate a Sierpinski Gasket. The function has the following arguments:
+We design a function `generate_sg()` that uses the chaos game to generate a Sierpinski Gasket. The function has the following arguments:
 
 -   `n` determines the number of iterations. A large `n` produces a figure with a sharper pattern.
 
 -   `v1`, `v2` and `v3` determine the coordinates of the three vertices of the fractal. Their default values produce a equilateral triangle.
 
--   `p` determines the location of the new point on the line segment between the previous point and the chosen vertex. Note that `p` must be comprised between `0` and `1`; small values indicates that the new point is close to the selected vertex, while values close to `1` indicate that the new point is close to the previous one.
+-   `p` determines the location of the new point on the line segment between the previous point and the chosen vertex. Note that `p` must be comprised between `0` and `1`; a small value indicates that the new point is close to the selected vertex, and a value close to `1` indicates that the new point is close to the previous one.
 
 -   `initial_point` indicates the location of the initial point.
 
@@ -99,7 +100,6 @@ generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/
   
   ggsave(paste("Triangular Fractal with p =", p, ".jpeg"),
          width = 4, height = 2 * sqrt(3), path = "Plots")
-  
   return(g)
   
 }
@@ -111,19 +111,12 @@ The loop of `generate_sg` can be simplified in the following way to speed up the
 generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/2), 
                         p = 0.5, initial_point = v1, title = NULL, subtitle = NULL){
   
-  points <- data.frame(x = NA, y = NA)
+  points      <- data.frame(x = NA, y = NA)
+  points[1, ] <- initial_point
   
-  point <- initial_point
-  
-  for(i in 1:n){
+  for(i in 1 : n)  points[i + 1, ] <- p       * points[i, ] +
+                                      (1 - p) * sample(list(v1, v2, v3), size = 1)[[1]]
 
-    point       <- p       * point +
-                   (1 - p) * sample(list(v1, v2, v3), size = 1)[[1]]
-    
-    points[i, ] <- point
-    
-  }
-  
   g <- ggplot(points, aes(x, y)) +
     geom_point(shape = ".") +
     labs(title = title, subtitle = subtitle) + 
@@ -133,13 +126,12 @@ generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/
   
   ggsave(paste("Triangular Fractal with p =", p, ".jpeg"),
          width = 4, height = 2 * sqrt(3), path = "Plots")
-  
   return(g)
   
 }
 ```
 
-Running the function with its arguments left to their defaults values generates the Sierpinski Gasket.
+With its arguments left to their defaults values, the function generates the Sierpinski Gasket.
 
 ``` r
 generate_sg()
@@ -150,14 +142,11 @@ generate_sg()
 Other Triangular Fractals
 -------------------------
 
-We can design triangular fractals with various shapes and patterns by varying the values of the parameters of the function `generate_sg`. First, by changing the value of `p`, we generate fractals with different patterns.
+We can design triangular fractals with various shapes and patterns by varying the values of the parameters of `generate_sg()`. First, by changing the value of `p`, we generate fractals with different patterns.
 
 ``` r
-for(p in c(0.1, 0.2, 0.3, 0.45, 0.5, 0.55, 0.7, 0.8, 0.9, 0.95)){
-  
+for(p in c(0.1, 0.2, 0.3, 0.45, 0.5, 0.55, 0.7, 0.8, 0.9, 0.95))
   print(generate_sg(p = p, subtitle = paste("p =", p)))
-
-}
 ```
 
 <img src="RMD_Script_files/figure-markdown_github/sg p-1.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-2.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-3.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-4.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-5.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-6.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-7.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-8.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-9.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-10.png" style="display: block; margin: auto;" />
@@ -191,9 +180,11 @@ Note that increasing the number of iterations generates a figure with a sharper 
 
 ``` r
 set.seed(125)
-#generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2),
-#            n = 1e5)
+generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2),
+            n = 1e5)
 ```
+
+<img src="RMD_Script_files/figure-markdown_github/sg n-1.png" style="display: block; margin: auto;" />
 
 Also note that changing the location of the initial point does not significantly alter the outcome: the sequence of points rapidly follows the regular pattern.
 
@@ -211,19 +202,11 @@ General Formula
 The Function
 ------------
 
-One could also be interested in generating fractals with more vertices. The function `generate_fractal` is a generalization of the function `generate_sg` that can generate fractals with any number of vertices. It has the following arguments:
-
--   `n` determines the number of iterations.
+One could also be interested in generating fractals with more vertices. The function `generate_fractal()` is a generalization of `generate_sg()` that can generate fractals with any number of vertices. It has the same arguments as `generate_sg()` at the exception of:
 
 -   `k` determines the number of vertices of the fractal.
 
 -   `x` and `y` determine the x- and y-coordinates of the fractal's vertices. If the arguments `x` and `y` are left to `NULL`, then the coordinates are randomly generated.
-
--   `p` determines the location of the new point on the line segment between the previous point and the chosen vertex. Note that `p` must be comprised between `0` and `1`; small values indicates that the new point will be close to the selected vertex, while values close to `1` indicate that the new point will be close to the previous one.
-
--   `title` is the title of the graph. If let to `NULL`, the figure has no title.
-
--   `subtitle` is the subtitle of the graph. If let to `NULL`, the figure has no subtitle.
 
 ``` r
 generate_fractal <- function(n = 1e4, k = 4, x = NULL, y = NULL, p = 0.5, title = NULL, subtitle = NULL){
@@ -253,9 +236,7 @@ generate_fractal <- function(n = 1e4, k = 4, x = NULL, y = NULL, p = 0.5, title 
     theme(plot.title = element_text(hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5))
     
-  
   ggsave(paste("k =", k, "and p =", p, ".jpeg"), width = 4, height = 4, path = "Plots")
-  
   return(g)
   
 }
@@ -264,7 +245,7 @@ generate_fractal <- function(n = 1e4, k = 4, x = NULL, y = NULL, p = 0.5, title 
 Experimenting
 -------------
 
-Running the function with its parameters left to their default value generates a quadrilateral figure with its vertices randomly located.
+With its parameters left to their default value, the function generates a quadrilateral figure with its vertices randomly located.
 
 ``` r
 set.seed(123)
@@ -284,12 +265,9 @@ generate_fractal(x = c(0,0,1,1), y = c(0,1,0,1))
 Surprisingly, unlike the previous quadrilateral figure, the square fractal does not contain any clear pattern. Yet, once again, by varying the value of `p` we can change the patterns in the obtained figure.
 
 ``` r
-for(p in c(0.1, 0.2, 0.3, 0.45, 0.49, 0.5, 0.55, 0.7, 0.9)){
-  
-  print(generate_fractal(x = c(0,0,1,1), y = c(0,1,0,1),
+for(p in c(0.1, 0.2, 0.3, 0.45, 0.49, 0.5, 0.55, 0.7, 0.9))
+  print(generate_fractal(x = c(0,0,1,1), y = c(0,1,0,1),     
                          p = p, subtitle = paste("p =", p)))
-
-}
 ```
 
 <img src="RMD_Script_files/figure-markdown_github/fractal p-1.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-2.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-3.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-4.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-5.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-6.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-7.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-8.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-9.png" style="display: block; margin: auto;" />
@@ -323,14 +301,15 @@ for(i in 1:length(ks)){
 Bonus: Barnsley Fern
 ====================
 
-I want to conclude this script with an adaptation of the chaos game that generates the so-called Barnsley Fern (in my opinion one of the most beautiful fractals there is.). Remark on Figure 2. that each leaf of the fern is a fern itself.
+I want to conclude this script with an adaptation of the chaos game that generates the so-called Barnsley Fern (in my opinion one of the most beautiful fractals there is.). Note how each leaf of the fern is a fern itself.
 
-![Barnsley Fern](Barnsley%20Fern.jpeg)
-
+<center>
+<img src="Barnsley%20Fern.jpeg" alt="Barnsley Fern" height="250" />
+</center>
 The Function
 ------------
 
-The function `generate_bf` uses an adaptation of the chaos game to generate a Barnsley Fern. The underlying iterative mechanism of the function is fundamentally the same as that of the functions `generate_fractal` and `generate_sg`: given a point, we randomly apply to its coordinates a transformation from a given set of transformations to generate the next point. For the function `generate_bf`, we apply one of `4` affine transformations to the point's coordinates. These `4` transformation are captured in the rows of the two matrices `M1` and `M2`[2].
+The function `generate_bf()` uses an adaptation of the chaos game to generate a Barnsley Fern. The underlying iterative mechanism of `generate_bf()` is fundamentally the same as that of `generate_fractal()` and `generate_sg()`: given a point, we randomly apply to its coordinates a transformation from a given set of transformations to generate the next point. For the function `generate_bf()`, we apply one of `4` affine transformations to the point's coordinates. These four transformation are captured in the four rows of the matrices `M1` and `M2`. I obtained the values for the entries of these matrices from Mr. Barnsley's book `Fractals Everywhere` (p.86, table III.3. *IFS code for a fern*). For clarity, I decided to split the table from Mr. Barnsley's book into two matrices.
 
 -   `n` determines the number of iterations.
 
@@ -375,13 +354,12 @@ generate_bf <- function(n = 1e4, proba = c(0.01, 0.85, 0.07, 0.07), title = NULL
     
   
   ggsave("Barnsley Fern.jpeg", width = 3, height = 3, path = "Plots")
-  
   return(g)
   
 }
 ```
 
-Running the function with its parameters left to their default value generates Barnsley Fern.
+With its parameters left to their default value, the function generates Barnsley Fern.
 
 ``` r
 generate_bf()
@@ -392,7 +370,7 @@ generate_bf()
 Experimenting
 -------------
 
-Changing the probabilities in `proba` changes the distribution of the points among the different elements of the fern (stem, leaves' end, left- and right-hand sides). If we set one of the elements of `proba` to `0`, it leaves the associated element of the fern blank.
+Changing the probabilities in `proba` changes the distribution of the points among the different elements of the fern (stem, leaves' end, and left- and right-hand sides). If we set one of the elements of `proba` to `0`, it leaves the associated element of the fern blank.
 
 ``` r
 proba     <- c(0.01, 0.85, 0.07, 0.07)
@@ -444,8 +422,4 @@ for(i in 1:4){
 Summary
 =======
 
-I designed three functions `generate_sg`, `generate_fractal` and `generate_bf` that respectively generate the Sierpinski Gasket, fractals with any number of vertices and the Barnsley Fern. Each function has parameters that allow us to tweak the shape of and pattern in the obtained fractal. Most important is the argument `p` of the functions `generate_sg` and `generate_fractal` which determines whether the figure is a fractal with a clear pattern or a bunch of points located in a chaotic manner.
-
-[1] The tutorial video is freely available at <https://www.youtube.com/watch?v=kbKtFN71Lfs>.
-
-[2] I got the values for the entries of these matrices from Mr. Barnsley's book `Fractals Everywhere` (p.86, table III.3. *IFS code for a fern*). For clarity, I decided to split the table from Mr. Barnsley's book into two matrices.
+I designed three functions `generate_sg()`, `generate_fractal()` and `generate_bf()` that respectively generate the Sierpinski Gasket, fractals with any number of vertices and the Barnsley Fern. Each function has parameters that allow us to tweak the shape of and pattern in the obtained fractal. Most important is the argument `p` of the functions `generate_sg` and `generate_fractal` which determines whether the figure is a fractal with a clear pattern or a bunch of points located in a chaotic manner.
