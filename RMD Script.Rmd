@@ -1,7 +1,7 @@
 ---
 title: "Fractals - Choas Game"
 author: "Raphaël Morsomme"
-date: "`r Sys.Date()"
+date: "`r Sys.Date()`"
 output:
   github_document:
     toc: TRUE

@@ -1,7 +1,7 @@
 Fractals - Choas Game
 ================
 Raphaël Morsomme
-\`r Sys.Date()
+2019-01-10
 
 -   [Introduction](#introduction)
     -   [Fractals](#fractals)
