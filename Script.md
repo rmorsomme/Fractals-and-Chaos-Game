@@ -5,7 +5,7 @@ Raphaël Morsomme
 
 -   [Introduction](#introduction)
     -   [Fractals](#fractals)
-    -   [The Choas Game](#the-choas-game)
+    -   [The Chaos Game](#the-chaos-game)
     -   [Outline of Script](#outline-of-script)
 -   [Sierpinski Gasket and Other Triangular Fractals](#sierpinski-gasket-and-other-triangular-fractals)
     -   [The Function](#the-function)
@@ -32,13 +32,12 @@ Fractals
 
 Fractals are complex mathematical objects. In this script, it is sufficient to understand them as geometric figures whose parts are reduced-size copies of the whole. That is, given a fractal, if we zoom in on any of its part, we find the exact same patterns as in the original figure, no matter how much we zoom in. One of the most famous fractals in mathematics is the Sierpinski Triangle.
 
-<center>
-<img src="Plots/Sierpinski%20Gasket.jpeg" alt="Sierpinski Gasket" width="250" />
-</center>
-The Choas Game
+![Sierpinski Gasket](Plots/Sierpinski%20Gasket.jpeg){height = 250px, width = 250px}
+
+The Chaos Game
 --------------
 
-The 8-minute <tutorial *Chaos Game* by Numberphile>\[<https://www.youtube.com/watch?v=kbKtFN71Lfs>\] does a much better job at explaining the choas game than I possibly could, so I recommend the reader to simply watch it to understand how the method works. To generate the Sierpinski Gasket with the chaos game, we follow 5 steps:
+The 8-minute [tutorial](https://www.youtube.com/watch?v=kbKtFN71Lfs) *Chaos Game* by Numberphile does a much better job at explaining the choas game than I possibly could, so I recommend the reader to simply watch it to understand how the method works. To generate the Sierpinski Gasket with the chaos game, we follow 5 steps:
 
 1.  Take three points in a plane. These will be the vertices of the final fractal.
 2.  Choose a point in the plane and draw it.
