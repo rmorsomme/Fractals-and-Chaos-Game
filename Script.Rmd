@@ -17,7 +17,7 @@ In this script, I implement the so-called *choas game* to generate fractals. I d
 ## Fractals
 Fractals are complex mathematical objects. In this script, it is sufficient to understand them as geometric figures whose parts are reduced-size copies of the whole. That is, given a fractal, if we zoom in on any of its part, we find the exact same patterns as in the original figure, no matter how much we zoom in. One of the most famous fractals in mathematics is the Sierpinski Triangle.
 
-![Sierpinski Gasket](Plots/Sierpinski Gasket.jpeg){height = 250px, width = 250px}
+![Sierpinski Gasket](Plots/Sierpinski Gasket.jpeg){height=250px, width=250px}
 
 ## The Chaos Game
 The 8-minute [tutorial](https://www.youtube.com/watch?v=kbKtFN71Lfs) *Chaos Game* by Numberphile does a much better job at explaining the choas game than I possibly could, so I recommend the reader to simply watch it to understand how the method works. To generate the Sierpinski Gasket with the chaos game, we follow 5 steps:

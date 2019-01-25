@@ -32,7 +32,7 @@ Fractals
 
 Fractals are complex mathematical objects. In this script, it is sufficient to understand them as geometric figures whose parts are reduced-size copies of the whole. That is, given a fractal, if we zoom in on any of its part, we find the exact same patterns as in the original figure, no matter how much we zoom in. One of the most famous fractals in mathematics is the Sierpinski Triangle.
 
-![Sierpinski Gasket](Plots/Sierpinski%20Gasket.jpeg){height = 250px, width = 250px}
+<img src="Plots/Sierpinski%20Gasket.jpeg" alt="Sierpinski Gasket" width="250" />
 
 The Chaos Game
 --------------
