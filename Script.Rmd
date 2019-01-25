@@ -12,17 +12,17 @@ library(tidyverse)
 ```
 
 # Introduction
-In this script, I implement the so-called *choas game* to generate fractals. I decided to write this script after watching a tutorial video by Numberphile on the topic. I found the chaos game fascinating and wanted to implement it on R Studio. I also wanted to generalize this method to be able to generate other types of fractals.
+In this script, I implement the so-called *choas game* to generate fractals. I decided to write this script after watching a tutorial video by Numberphile on the topic. I found the chaos game fascinating and wanted to implement it on R Studio. I also wanted to generalize this method to be able to generate other types of fractal.
 
 ## Fractals
-Fractals are complex mathematical objects. In this script, it is sufficient to understand them as geometric figures whose parts are reduced-size copies of the whole. That is, given a fractal, if we zoom in on any part, we find the exact same patterns as in the original figure, no matter how much we zoom in. One of the most famous fractals in mathematics is the Sierpinski Triangle.
+Fractals are complex mathematical objects. In this script, it is sufficient to understand them as geometric figures whose parts are reduced-size copies of the whole. That is, given a fractal, if we zoom in on any of its part, we find the exact same patterns as in the original figure, no matter how much we zoom in. One of the most famous fractals in mathematics is the Sierpinski Triangle.
 
 <center>
 ![Sierpinski Gasket](Plots/Sierpinski Gasket.jpeg){height=250px, width=250px}
 </center>
 
 ## The Choas Game
-The 8-minute <https://www.youtube.com/watch?v=kbKtFN71Lfs>[tutorial *Chaos Game* by Numberphile] does a much better job at explaining the choas game than I could possibly do, so I recommend the reader to simply watch it to understand how the method works. To generate the Sierpinski Gasket with the chaos game, we follow 5 steps:
+The 8-minute <tutorial *Chaos Game* by Numberphile>[https://www.youtube.com/watch?v=kbKtFN71Lfs] does a much better job at explaining the choas game than I possibly could, so I recommend the reader to simply watch it to understand how the method works. To generate the Sierpinski Gasket with the chaos game, we follow 5 steps:
 
 1. Take three points in a plane. These will be the vertices of the final fractal.
 2. Choose a point in the plane and draw it.
@@ -31,45 +31,56 @@ The 8-minute <https://www.youtube.com/watch?v=kbKtFN71Lfs>[tutorial *Chaos Game*
 5. Repeat from step 3.
 
 ## Outline of Script
-I kick off this script with a well-know fractal: the Sierpinski Gasket. I write a function that uses the chaos game to generate it and then experiment with the parameters to vary the shape of and the patterns in the obtained fractal. I then generalize the function to generate fractals with any number of vertices before finishing the script with an adaptation of the chaos game that generates Barnsley Fern, another beautiful fractal.
+I kick off this script with a well-know fractal: the Sierpinski Gasket. I write a function that uses the chaos game to generate it and then experiment with the parameters to vary the shape and patterns of the obtained figure I then generalize the function to generate fractals with any number of vertices before finishing the script with an adaptation of the chaos game that generates Barnsley Fern, another beautiful fractal.
 
 # Sierpinski Gasket and Other Triangular Fractals
 
 ## The Function
-We design a function `generate_sg()` that uses the chaos game to generate a Sierpinski Gasket. The function has the following arguments:
-
-* `n` determines the number of iterations. A large `n` produces a figure with a sharper pattern.
-
-* `v1`, `v2` and `v3` determine the coordinates of the three vertices of the fractal. Their default values produce a equilateral triangle.
-
-* `p` determines the location of the new point on the line segment between the previous point and the chosen vertex. Note that `p` must be comprised between `0` and `1`; a small value indicates that the new point is close to the selected vertex, and a value close to `1` indicates that the new point is close to the previous one.
-
-* `initial_point` indicates the location of the initial point.
-
-* `title` is the title of the graph. If let to `NULL`, the figure has no title.
-
-* `subtitle` is the subtitle of the graph. If let to `NULL`, the figure has no subtitle.
+We design the function `generate_sg()` that uses the chaos game to generate a Sierpinski Gasket.
 
 ```{r generate_sg}
-generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/2),
-                        p = 0.5, initial_point = v1, title = NULL, subtitle = NULL){
+generate_sg <- function(
   
-  points <- data.frame(x = NA, y = NA)
+  # Number of iterations. A large n produces sharp patterns.
+  n = 1e4,
   
+  # Coordinates of the vertices.
+  v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/2), 
+  
+  # How close to the chosen vertex the new point is. Must be comprised between 0 and 1.
+  p = 0.5,        
+  
+  # Coordinates of the initial point.
+  initial_point = v1, 
+  
+  # Title and subtitle of the plot.
+  title    = NULL, 
+  subtitle = NULL
+  
+  ){
+  
+  #
+  # Setup
+  points         <- data.frame(x = numeric(0), y = numeric(0))
   point_previous <- initial_point
   
+  #
+  # Chaos Game
   for(i in 1:n){
     
+    # Choose a vertex at random
     vertex         <- sample(list(v1, v2, v3), size = 1)[[1]]
+    
+    # Draw the new point
     point_new      <- p       * point_previous +
                       (1 - p) * vertex
-    
     points[i, ]    <- point_new
-    
     point_previous <- point_new
     
   }
   
+  #
+  # Plot
   g <- ggplot(points, aes(x, y)) +
     geom_point(shape = ".") +
     labs(title = title, subtitle = subtitle) + 
@@ -77,6 +88,7 @@ generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/
     theme(plot.title    = element_text(hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5))
   
+  # Save and return plot
   ggsave(paste("Triangular Fractal with p =", p, ".jpeg"),
          width = 4, height = 2 * sqrt(3), path = "Plots")
   return(g)
@@ -84,17 +96,23 @@ generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/
 }
 ```
 
-The loop of `generate_sg` can be simplified in the following way to speed up the function.
+We can simplify the loop of the function `generate_sg` to speed it up.
 
 ```{r generate_sg fast}
 generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/2), 
                         p = 0.5, initial_point = v1, title = NULL, subtitle = NULL){
   
-  points      <- data.frame(x = NA, y = NA)
+  points      <- data.frame(x = numeric(0), y = numeric(0))
   points[1, ] <- initial_point
   
-  for(i in 1 : n)  points[i + 1, ] <- p       * points[i, ] +
-                                      (1 - p) * sample(list(v1, v2, v3), size = 1)[[1]]
+  #
+  # Faster loop
+  for(i in 1 : n){
+    
+    points[i + 1, ] <-      p  * points[i, ] +
+                       (1 - p) * sample(list(v1, v2, v3), size = 1)[[1]]
+    
+  }
 
   g <- ggplot(points, aes(x, y)) +
     geom_point(shape = ".") +
@@ -110,10 +128,10 @@ generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/
 }
 ```
 
-With its arguments left to their defaults values, the function generates the Sierpinski Gasket.
+With its default arguments, the function `generate_sg()` produces the Sierpinski Gasket.
 
 ```{r sg default, fig.height = 2, fig.width = 3, fig.align = 'center', cache = TRUE}
-generate_sg()
+generate_sg(title = "Sierpinski Gasket", subtitle = "(10,000 iterations)")
 ```
 
 
@@ -248,7 +266,7 @@ for(i in 1:length(ks)){
 I want to conclude this script with an adaptation of the chaos game that generates the so-called Barnsley Fern (in my opinion one of the most beautiful fractals there is.). Note how each leaf of the fern is a fern itself.
 
 <center>
-![Barnsley Fern](Barnsley Fern.jpeg){width=250px, height=250px}
+![Barnsley Fern](Plots/Barnsley Fern.jpeg){width=250px, height=250px}
 </center>
 
 ## The Function

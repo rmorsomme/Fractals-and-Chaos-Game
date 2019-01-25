@@ -1,7 +1,7 @@
 Fractals - Choas Game
 ================
 Raphaël Morsomme
-2019-01-10
+2019-01-25
 
 -   [Introduction](#introduction)
     -   [Fractals](#fractals)
@@ -25,20 +25,20 @@ library(tidyverse)
 Introduction
 ============
 
-In this script, I implement the so-called *choas game* to generate fractals. I decided to write this script after watching a tutorial video by Numberphile on the topic. I found the chaos game fascinating and wanted to implement it on R Studio. I also wanted to generalize this method to be able to generate other types of fractals.
+In this script, I implement the so-called *choas game* to generate fractals. I decided to write this script after watching a tutorial video by Numberphile on the topic. I found the chaos game fascinating and wanted to implement it on R Studio. I also wanted to generalize this method to be able to generate other types of fractal.
 
 Fractals
 --------
 
-Fractals are complex mathematical objects. In this script, it is sufficient to understand them as geometric figures whose parts are reduced-size copies of the whole. That is, given a fractal, if we zoom in on any part, we find the exact same patterns as in the original figure, no matter how much we zoom in. One of the most famous fractals in mathematics is the Sierpinski Triangle.
+Fractals are complex mathematical objects. In this script, it is sufficient to understand them as geometric figures whose parts are reduced-size copies of the whole. That is, given a fractal, if we zoom in on any of its part, we find the exact same patterns as in the original figure, no matter how much we zoom in. One of the most famous fractals in mathematics is the Sierpinski Triangle.
 
 <center>
-<img src="Sierpinski%20Gasket.jpeg" alt="Sierpinski Gasket" width="250" />
+<img src="Plots/Sierpinski%20Gasket.jpeg" alt="Sierpinski Gasket" width="250" />
 </center>
 The Choas Game
 --------------
 
-The 8-minute <https://www.youtube.com/watch?v=kbKtFN71Lfs>\[tutorial *Chaos Game* by Numberphile\] does a much better job at explaining the choas game than I could possibly do, so I recommend the reader to simply watch it to understand how the method works. To generate the Sierpinski Gasket with the chaos game, we follow 5 steps:
+The 8-minute <tutorial *Chaos Game* by Numberphile>\[<https://www.youtube.com/watch?v=kbKtFN71Lfs>\] does a much better job at explaining the choas game than I possibly could, so I recommend the reader to simply watch it to understand how the method works. To generate the Sierpinski Gasket with the chaos game, we follow 5 steps:
 
 1.  Take three points in a plane. These will be the vertices of the final fractal.
 2.  Choose a point in the plane and draw it.
@@ -49,7 +49,7 @@ The 8-minute <https://www.youtube.com/watch?v=kbKtFN71Lfs>\[tutorial *Chaos Game
 Outline of Script
 -----------------
 
-I kick off this script with a well-know fractal: the Sierpinski Gasket. I write a function that uses the chaos game to generate it and then experiment with the parameters to vary the shape of and the patterns in the obtained fractal. I then generalize the function to generate fractals with any number of vertices before finishing the script with an adaptation of the chaos game that generates Barnsley Fern, another beautiful fractal.
+I kick off this script with a well-know fractal: the Sierpinski Gasket. I write a function that uses the chaos game to generate it and then experiment with the parameters to vary the shape and patterns of the obtained figure I then generalize the function to generate fractals with any number of vertices before finishing the script with an adaptation of the chaos game that generates Barnsley Fern, another beautiful fractal.
 
 Sierpinski Gasket and Other Triangular Fractals
 ===============================================
@@ -57,40 +57,51 @@ Sierpinski Gasket and Other Triangular Fractals
 The Function
 ------------
 
-We design a function `generate_sg()` that uses the chaos game to generate a Sierpinski Gasket. The function has the following arguments:
-
--   `n` determines the number of iterations. A large `n` produces a figure with a sharper pattern.
-
--   `v1`, `v2` and `v3` determine the coordinates of the three vertices of the fractal. Their default values produce a equilateral triangle.
-
--   `p` determines the location of the new point on the line segment between the previous point and the chosen vertex. Note that `p` must be comprised between `0` and `1`; a small value indicates that the new point is close to the selected vertex, and a value close to `1` indicates that the new point is close to the previous one.
-
--   `initial_point` indicates the location of the initial point.
-
--   `title` is the title of the graph. If let to `NULL`, the figure has no title.
-
--   `subtitle` is the subtitle of the graph. If let to `NULL`, the figure has no subtitle.
+We design the function `generate_sg()` that uses the chaos game to generate a Sierpinski Gasket.
 
 ``` r
-generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/2),
-                        p = 0.5, initial_point = v1, title = NULL, subtitle = NULL){
+generate_sg <- function(
   
-  points <- data.frame(x = NA, y = NA)
+  # Number of iterations. A large n produces sharp patterns.
+  n = 1e4,
   
+  # Coordinates of the vertices.
+  v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/2), 
+  
+  # How close to the chosen vertex the new point is. Must be comprised between 0 and 1.
+  p = 0.5,        
+  
+  # Coordinates of the initial point.
+  initial_point = v1, 
+  
+  # Title and subtitle of the plot.
+  title    = NULL, 
+  subtitle = NULL
+  
+  ){
+  
+  #
+  # Setup
+  points         <- data.frame(x = numeric(0), y = numeric(0))
   point_previous <- initial_point
   
+  #
+  # Chaos Game
   for(i in 1:n){
     
+    # Choose a vertex at random
     vertex         <- sample(list(v1, v2, v3), size = 1)[[1]]
+    
+    # Draw the new point
     point_new      <- p       * point_previous +
                       (1 - p) * vertex
-    
     points[i, ]    <- point_new
-    
     point_previous <- point_new
     
   }
   
+  #
+  # Plot
   g <- ggplot(points, aes(x, y)) +
     geom_point(shape = ".") +
     labs(title = title, subtitle = subtitle) + 
@@ -98,6 +109,7 @@ generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/
     theme(plot.title    = element_text(hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5))
   
+  # Save and return plot
   ggsave(paste("Triangular Fractal with p =", p, ".jpeg"),
          width = 4, height = 2 * sqrt(3), path = "Plots")
   return(g)
@@ -105,17 +117,23 @@ generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/
 }
 ```
 
-The loop of `generate_sg` can be simplified in the following way to speed up the function.
+We can simplify the loop of the function `generate_sg` to speed it up.
 
 ``` r
 generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/2), 
                         p = 0.5, initial_point = v1, title = NULL, subtitle = NULL){
   
-  points      <- data.frame(x = NA, y = NA)
+  points      <- data.frame(x = numeric(0), y = numeric(0))
   points[1, ] <- initial_point
   
-  for(i in 1 : n)  points[i + 1, ] <- p       * points[i, ] +
-                                      (1 - p) * sample(list(v1, v2, v3), size = 1)[[1]]
+  #
+  # Faster loop
+  for(i in 1 : n){
+    
+    points[i + 1, ] <-      p  * points[i, ] +
+                       (1 - p) * sample(list(v1, v2, v3), size = 1)[[1]]
+    
+  }
 
   g <- ggplot(points, aes(x, y)) +
     geom_point(shape = ".") +
@@ -131,13 +149,13 @@ generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/
 }
 ```
 
-With its arguments left to their defaults values, the function generates the Sierpinski Gasket.
+With its default arguments, the function `generate_sg()` produces the Sierpinski Gasket.
 
 ``` r
-generate_sg()
+generate_sg(title = "Sierpinski Gasket", subtitle = "(10,000 iterations)")
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/sg default-1.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/sg default-1.png" style="display: block; margin: auto;" />
 
 Other Triangular Fractals
 -------------------------
@@ -149,7 +167,7 @@ for(p in c(0.1, 0.2, 0.3, 0.45, 0.5, 0.55, 0.7, 0.8, 0.9, 0.95))
   print(generate_sg(p = p, subtitle = paste("p =", p)))
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/sg p-1.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-2.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-3.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-4.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-5.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-6.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-7.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-8.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-9.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/sg p-10.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/sg p-1.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/sg p-2.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/sg p-3.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/sg p-4.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/sg p-5.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/sg p-6.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/sg p-7.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/sg p-8.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/sg p-9.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/sg p-10.png" style="display: block; margin: auto;" />
 
 It seems that for `p` superior to `0.5`, larger values give figures that are more chaotic.
 
@@ -160,21 +178,21 @@ set.seed(123)
 generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2))
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/sg v-1.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/sg v-1.png" style="display: block; margin: auto;" />
 
 ``` r
 set.seed(124)
 generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2))
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/sg v-2.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/sg v-2.png" style="display: block; margin: auto;" />
 
 ``` r
 set.seed(125)
 generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2))
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/sg v-3.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/sg v-3.png" style="display: block; margin: auto;" />
 
 Note that increasing the number of iterations generates a figure with a sharper pattern, but takes more time to run.
 
@@ -184,7 +202,7 @@ generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2),
             n = 1e5)
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/sg n-1.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/sg n-1.png" style="display: block; margin: auto;" />
 
 Also note that changing the location of the initial point does not significantly alter the outcome: the sequence of points rapidly follows the regular pattern.
 
@@ -194,7 +212,7 @@ generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2),
             initial_point = c(3, 3))
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/sg i_p-1.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/sg i_p-1.png" style="display: block; margin: auto;" />
 
 General Formula
 ===============
@@ -252,7 +270,7 @@ set.seed(123)
 generate_fractal()
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/fractal default-1.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/fractal default-1.png" style="display: block; margin: auto;" />
 
 By fixing the vertices, we can generate a square fractal.
 
@@ -260,7 +278,7 @@ By fixing the vertices, we can generate a square fractal.
 generate_fractal(x = c(0,0,1,1), y = c(0,1,0,1))
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/fractal square-1.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/fractal square-1.png" style="display: block; margin: auto;" />
 
 Surprisingly, unlike the previous quadrilateral figure, the square fractal does not contain any clear pattern. Yet, once again, by varying the value of `p` we can change the patterns in the obtained figure.
 
@@ -270,7 +288,7 @@ for(p in c(0.1, 0.2, 0.3, 0.45, 0.49, 0.5, 0.55, 0.7, 0.9))
                          p = p, subtitle = paste("p =", p)))
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/fractal p-1.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-2.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-3.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-4.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-5.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-6.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-7.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-8.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal p-9.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/fractal p-1.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/fractal p-2.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/fractal p-3.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/fractal p-4.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/fractal p-5.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/fractal p-6.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/fractal p-7.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/fractal p-8.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/fractal p-9.png" style="display: block; margin: auto;" />
 
 It seems that for square fractals, values of `p` equal or superior to `0.5` generates figures with no apparent pattern.
 
@@ -296,7 +314,7 @@ for(i in 1:length(ks)){
 }
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/fractal k-1.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal k-2.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal k-3.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/fractal k-4.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/fractal k-1.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/fractal k-2.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/fractal k-3.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/fractal k-4.png" style="display: block; margin: auto;" />
 
 Bonus: Barnsley Fern
 ====================
@@ -304,7 +322,7 @@ Bonus: Barnsley Fern
 I want to conclude this script with an adaptation of the chaos game that generates the so-called Barnsley Fern (in my opinion one of the most beautiful fractals there is.). Note how each leaf of the fern is a fern itself.
 
 <center>
-<img src="Barnsley%20Fern.jpeg" alt="Barnsley Fern" height="250" />
+<img src="Plots/Barnsley%20Fern.jpeg" alt="Barnsley Fern" height="250" />
 </center>
 The Function
 ------------
@@ -365,7 +383,7 @@ With its parameters left to their default value, the function generates Barnsley
 generate_bf()
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/bf default-1.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/bf default-1.png" style="display: block; margin: auto;" />
 
 Experimenting
 -------------
@@ -392,7 +410,7 @@ for(i in 1:4){
 }
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/bf proba I-1.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/bf proba I-2.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/bf proba I-3.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/bf proba I-4.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/bf proba I-1.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/bf proba I-2.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/bf proba I-3.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/bf proba I-4.png" style="display: block; margin: auto;" />
 
 On the contrary, if we increase the value of an element of `proba`, we make the associated element of the fern more pronounced.
 
@@ -417,7 +435,7 @@ for(i in 1:4){
 }
 ```
 
-<img src="RMD_Script_files/figure-markdown_github/bf proba II-1.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/bf proba II-2.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/bf proba II-3.png" style="display: block; margin: auto;" /><img src="RMD_Script_files/figure-markdown_github/bf proba II-4.png" style="display: block; margin: auto;" />
+<img src="Script_files/figure-markdown_github/bf proba II-1.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/bf proba II-2.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/bf proba II-3.png" style="display: block; margin: auto;" /><img src="Script_files/figure-markdown_github/bf proba II-4.png" style="display: block; margin: auto;" />
 
 Summary
 =======
