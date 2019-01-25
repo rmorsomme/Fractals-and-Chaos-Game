@@ -324,7 +324,7 @@ Bonus: Barnsley Fern
 
 I want to conclude this script with an adaptation of the chaos game that generates the so-called Barnsley Fern (in my opinion one of the most beautiful fractals there is.). Note how each leaf of the fern is a fern itself.
 
-<img src="Plots/Barnsley%20Fern.jpeg" alt="Barnsley Fern" height="250" />
+<img src="Plots/Barnsley%20Fern%20sharp.jpeg" alt="Barnsley Fern" height="250" />
 
 The Function
 ------------
@@ -336,22 +336,29 @@ The function `generate_bf()` uses an adaptation of the chaos game to generate a 
 ``` r
 generate_bf <- function(n = 1e4, proba = c(0.01, 0.85, 0.07, 0.07), title = NULL, subtitle = NULL){
   
-  M1 <- matrix(c(0    , 0    , 0    , 0.16,
-                 0.85 , 0.04 , -0.04, 0.85,
-                 0.20 , -0.26, 0.23 , 0.22,
-                 -0.15, 0.28 , 0.26 , 0.24), byrow = T, ncol = 4)
+  M1 <- matrix(
+    c(0    , 0    , 0    , 0.16,
+      0.85 , 0.04 , -0.04, 0.85,
+      0.20 , -0.26, 0.23 , 0.22,
+      -0.15, 0.28 , 0.26 , 0.24),
+    byrow = TRUE, 
+    ncol = 4
+    )
 
-  M2 <- matrix(c(0, 0   ,
-                 0, 1.60,
-                 0, 1.60,
-                 0, 0.44), byrow = T, ncol = 2)
+  M2 <- matrix(
+    c(0, 0   ,
+      0, 1.60,
+      0, 1.60,
+      0, 0.44),
+    byrow = TRUE, 
+    ncol = 2)
   
-  points <- data.frame(x = NA, y = NA)
+  points <- data.frame(x = numeric(0), y = numeric(0))
   
-  point <- c(0,0)
+  point <- c(0, 0)
   
   
-  for(i in 1:n){
+  for(i in 1 : n){
     
     k           <- sample(1 : 4, size = 1, prob = proba)
     point       <- matrix(M1[k, ], byrow = T, ncol = 2) %*% point + M2[k, ]
@@ -376,7 +383,7 @@ generate_bf <- function(n = 1e4, proba = c(0.01, 0.85, 0.07, 0.07), title = NULL
 With its parameters left to their default value, the function generates Barnsley Fern.
 
 ``` r
-generate_bf()
+generate_bf(title = "Barnsley Fern", subtitle = "10,000 iterations")
 ```
 
 <img src="Script_files/figure-markdown_github/bf default-1.png" style="display: block; margin: auto;" />
@@ -436,4 +443,4 @@ for(i in 1:4){
 Summary
 =======
 
-I designed three functions `generate_sg()`, `generate_fractal()` and `generate_bf()` that respectively generate the Sierpinski Gasket, fractals with any number of vertices and the Barnsley Fern. Each function has parameters that allow us to tweak the shape of and pattern in the obtained fractal. Most important is the argument `p` of the functions `generate_sg` and `generate_fractal` which determines whether the figure is a fractal with a clear pattern or a bunch of points located in a chaotic manner.
+I designed three functions `generate_sg()`, `generate_fractal()` and `generate_bf()` that respectively generate the Sierpinski Gasket, fractals with any number of vertices and the Barnsley Fern. Each function has parameters that allow us to tweak the shape and pattern of the obtained fractal. Most important is the argument `p` of the functions `generate_sg` and `generate_fractal` which determines whether the figure is a fractal with a clear pattern or a chaotic bunch of points.

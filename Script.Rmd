@@ -269,7 +269,7 @@ for(i in 1:length(ks)){
 # Bonus: Barnsley Fern
 I want to conclude this script with an adaptation of the chaos game that generates the so-called Barnsley Fern (in my opinion one of the most beautiful fractals there is.). Note how each leaf of the fern is a fern itself.
 
-![Barnsley Fern](Plots/Barnsley Fern.jpeg){width=250px, height=250px}
+![Barnsley Fern](Plots/Barnsley Fern sharp.jpeg){width=250px, height=250px}
 
 ## The Function
 The function `generate_bf()` uses an adaptation of the chaos game to generate a Barnsley Fern. The iterative mechanism of `generate_bf()` is fundamentally the same as that of `generate_fractal()` and `generate_sg()`: given a point, we randomly apply to its coordinates a transformation from a given set to generate the next point. For the function `generate_bf()`, we apply one of four affine transformations. These four transformation are captured in the four rows of the matrices `M1` and `M2`. I obtained the values for the entries of these matrices from Mr. Barnsley's book `Fractals Everywhere` (p.86, table III.3. *IFS code for a fern*). For clarity, I decided to split the table from Mr. Barnsley's book into two matrices. The function `generate_bf()` has the same arguments as `generate_sg()` and `generate_fractal()` at the exception of:
