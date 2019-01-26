@@ -146,7 +146,7 @@ It seems that for `p` superior to `0.5`, larger values give figures that are mor
 
 Second, we can also randomly determine the location of the vertices to obtain different triangular figures.
 
-```{r sg v, fig.height = 2, fig.width = 3, fig.align = 'center', cache = TRUE}
+```{r sg v, fig.height = 3, fig.width = 3, fig.align = 'center', cache = TRUE}
 set.seed(123)
 generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2), subtitle = "Vertices randomly located")
 
@@ -159,7 +159,7 @@ generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2), subtitle = "Vertices ra
 
 Third, by increasing the number of iterations, we generate a figure with a sharper pattern.
 
-```{r sg n, fig.height = 2, fig.width = 3, fig.align = 'center', cache = TRUE}
+```{r sg n, fig.height = 3, fig.width = 3, fig.align = 'center', cache = TRUE}
 set.seed(125)
 generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2),
             n = 1e5,
