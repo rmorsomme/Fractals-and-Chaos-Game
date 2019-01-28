@@ -25,7 +25,7 @@ library(tidyverse)
 Introduction
 ============
 
-In this script, I implement the so-called *choas game* to generate fractals. I decided to write this script after watching a [tutorial video](https://www.youtube.com/watch?v=kbKtFN71Lfs) by Numberphile on the topic. I found the chaos game fascinating and wanted to implement it on R. I also wanted to generalize this method to be able to generate other types of fractal.
+In this script, I implement the so-called *choas game* to generate fractals. I decided to write this script after watching a [tutorial video](https://www.youtube.com/watch?v=kbKtFN71Lfs) by Numberphile on the topic. I found the chaos game fascinating and wanted to implement it on R. I also wanted to generalize the method to be able to generate other types of fractal.
 
 Fractals
 --------
@@ -93,7 +93,7 @@ generate_sg <- function(
     # Choose a vertex at random
     vertex         <- sample(list(v1, v2, v3), size = 1)[[1]]
     
-    # Draw the new point
+    # Compute and save the new point
     point_new      <- p       * point_previous +
                       (1 - p) * vertex
     points[i, ]    <- point_new
@@ -121,7 +121,7 @@ generate_sg <- function(
 }
 ```
 
-We can simplify the loop of the for-function `generate_sg()` to speed it up.
+We can simplify the for-loop of the function `generate_sg()` to speed it up.
 
 ``` r
 generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/2), 
@@ -203,7 +203,7 @@ generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2),
 
 <img src="Script_files/figure-markdown_github/sg n-1.png" style="display: block; margin: auto;" />
 
-Finally, changing the location of the initial point does not significantly alter the outcome of teh chaos game: the sequence of points rapidly follows the regular pattern.
+Finally, changing the location of the initial point does not significantly alter the outcome of the chaos game: the sequence of points rapidly follows the regular pattern.
 
 ``` r
 set.seed(125)
@@ -238,6 +238,7 @@ generate_fractal <- function(n = 1e4, p = 0.5, title = NULL, subtitle = NULL,
   
   points <- data.frame(x = numeric(0), y = numeric(0))
   
+  # Initial point
   point <- c(x[1], y[1])
   
   
@@ -247,6 +248,7 @@ generate_fractal <- function(n = 1e4, p = 0.5, title = NULL, subtitle = NULL,
     
     m      <- sample(1 : length(x), size = 1)
     vertex <- c(x[m], y[m])
+    
     point  <- p       * point +
               (1 - p) * vertex
     
@@ -341,7 +343,7 @@ I want to conclude this script with an adaptation of the chaos game that generat
 The Function `generate_bf()`
 ----------------------------
 
-The function `generate_bf()` uses an adaptation of the chaos game to generate a Barnsley Fern. The iterative mechanism of `generate_bf()` is fundamentally the same as that of `generate_fractal()` and `generate_sg()`: given a point, we randomly apply to its coordinates a transformation from a given set to generate the next point. For the function `generate_bf()`, we apply one of four affine transformations. These four transformation are captured in the four rows of the matrices `M1` and `M2`. I obtained the values for the entries of these matrices from Mr. Barnsley's book `Fractals Everywhere` (p.86, table III.3. *IFS code for a fern*). For clarity, I decided to split the table from Mr. Barnsley's book into two matrices. The function `generate_bf()` has the same arguments as `generate_sg()` and `generate_fractal()` at the exception of:
+The function `generate_bf()` uses an adaptation of the chaos game that generates a Barnsley Fern. The iterative mechanism of `generate_bf()` is fundamentally the same as that of `generate_fractal()` and `generate_sg()`: given a point, we randomly apply to its coordinates a transformation from a given set to generate the next point. For the function `generate_bf()`, we apply one of four affine transformations. These four transformation are captured in the four rows of the matrices `M1` and `M2`. I obtained the values for the entries of these matrices from Mr. Barnsley's book *Fractals Everywhere* (p.86, table III.3. *IFS code for a fern*). For clarity, I decided to split the table from Mr. Barnsley's book into two matrices. The function `generate_bf()` has the same arguments as `generate_sg()` and `generate_fractal()` at the exception of:
 
 -   `proba` gives the probability of applying each of the four transformations to the point. Each transformation has an element of Barnsley Fern associated to it: the stem, the leaves' end, the fern's left-hand side and the fern's right-hand side.
 
@@ -372,6 +374,7 @@ generate_bf <- function(n = 1e4, title = NULL, subtitle = NULL,
   
   points <- data.frame(x = numeric(0), y = numeric(0))
   
+  # Initial point
   point <- c(0, 0)
   
   
@@ -466,4 +469,4 @@ for(i in 1 : 4){
 Summary
 =======
 
-I designed three functions `generate_sg()`, `generate_fractal()` and `generate_bf()` that respectively generate the Sierpinski Gasket, fractals with any number of vertices and the Barnsley Fern. Each function has parameters that allow us to tweak the shape and pattern of the obtained fractal. Most important is the argument `p` of the functions `generate_sg()` and `generate_fractal()` which determines whether the obtained figure is a fractal or a bunch of points with no clear pattern.
+I designed three functions `generate_sg()`, `generate_fractal()` and `generate_bf()` which use the choas game to respectively generate the Sierpinski Gasket, fractals with any number of vertices and the Barnsley Fern. Each function has parameters that allow us to tweak the shape and pattern of the obtained fractal. Most important is the argument `p` of the functions `generate_sg()` and `generate_fractal()` which determines whether the obtained figure is a fractal or a bunch of points with no clear pattern.
