@@ -394,6 +394,7 @@ generate_bf <- function(n = 1e4, proba = c(0.01, 0.85, 0.07, 0.07), title = NULL
           plot.subtitle = element_text(hjust = 0.5))
     
   
+  #
   # Output
   ggsave("Barnsley Fern.jpeg", width = 3, height = 3, path = "Plots")
   return(g)
@@ -421,7 +422,7 @@ subtitles <- c("1st element of proba is null: blank stem"           ,
                "3rd element of proba is null: blank left-hand side" ,
                "4th element of proba is null: blank right-hand side")
 
-for(i in 1:4){
+for(i in 1 : 4){
   
   proba_blank    <- proba
   proba_blank[i] <- 0
@@ -440,12 +441,12 @@ On the contrary, if we increase the value of an element of `proba`, we make the 
 
 ``` r
 proba     <- c(0.01, 0.85, 0.07, 0.07)
-subtitles <- c("Increased 1st element of proba: stem more pronounced"           ,
-               "Increased 2nd element of proba: leaves' ends more pronounced"   ,
-               "Increased 3rd element of proba: left-hand side more pronounced" ,
-               "Increased 4th element of proba: right-hand side more pronounced")
+subtitles <- c("Larger 1st element of proba: stem more pronounced"           ,
+               "Larger 2nd element of proba: leaves' ends more pronounced"   ,
+               "Larger 3rd element of proba: left-hand side more pronounced" ,
+               "Larger 4th element of proba: right-hand side more pronounced")
 
-for(i in 1:4){
+for(i in 1 : 4){
   
   proba_increase    <- proba
   proba_increase[i] <- proba_increase[i] * 3 # Increase element of proba by a factor of 3.
