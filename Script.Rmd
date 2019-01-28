@@ -412,4 +412,4 @@ for(i in 1 : 4){
 ```
 
 # Summary
-I designed three functions `generate_sg()`, `generate_fractal()` and `generate_bf()` which use the choas game to respectively generate the Sierpinski Gasket, fractals with any number of vertices and the Barnsley Fern. Each function has parameters that allow us to tweak the shape and pattern of the obtained fractal. Most important is the argument `p` of the functions `generate_sg()` and `generate_fractal()` which determines whether the obtained figure is a fractal or a bunch of points with no clear pattern.
+I designed three functions `generate_sg()`, `generate_fractal()` and `generate_bf()` which use the chaos game to respectively generate the Sierpinski Gasket, fractals with any number of vertices and the Barnsley Fern. Each function has parameters that allow us to tweak the shape and pattern of the obtained fractal. Most important is the argument `p` of the functions `generate_sg()` and `generate_fractal()` which determines whether the obtained figure is a fractal or a bunch of points with no clear pattern.
