@@ -6,16 +6,16 @@ Raphaël Morsomme
 -   [Introduction](#introduction)
     -   [Fractals](#fractals)
     -   [The Chaos Game](#the-chaos-game)
-    -   [Outline of Script](#outline-of-script)
--   [Sierpinski Gasket and Other Triangular Fractals](#sierpinski-gasket-and-other-triangular-fractals)
+    -   [Outline](#outline)
+-   [Triangular Fractals (Sierpinski Gasket and Others)](#triangular-fractals-sierpinski-gasket-and-others)
     -   [The Function `generate_sg()`](#the-function-generate_sg)
-    -   [Other Triangular Fractals](#other-triangular-fractals)
--   [General Formula](#general-formula)
-    -   [The Function `generate_fractal()`](#the-function-generate_fractal)
     -   [Experimenting](#experimenting)
+-   [Fractals with *k* Vertices](#fractals-with-k-vertices)
+    -   [The Function `generate_fractal()`](#the-function-generate_fractal)
+    -   [Experimenting](#experimenting-1)
 -   [Bonus: Barnsley Fern](#bonus-barnsley-fern)
     -   [The Function `generate_bf()`](#the-function-generate_bf)
-    -   [Experimenting](#experimenting-1)
+    -   [Experimenting](#experimenting-2)
 -   [Summary](#summary)
 
 ``` r
@@ -25,7 +25,7 @@ library(tidyverse)
 Introduction
 ============
 
-In this script, I implement the so-called *choas game* to generate fractals. I decided to write this script after watching a [tutorial video](https://www.youtube.com/watch?v=kbKtFN71Lfs) by Numberphile on the topic. I found the chaos game fascinating and wanted to implement it on R Studio. I also wanted to generalize this method to be able to generate other types of fractal.
+In this script, I implement the so-called *choas game* to generate fractals. I decided to write this script after watching a [tutorial video](https://www.youtube.com/watch?v=kbKtFN71Lfs) by Numberphile on the topic. I found the chaos game fascinating and wanted to implement it on R. I also wanted to generalize this method to be able to generate other types of fractal.
 
 Fractals
 --------
@@ -45,18 +45,18 @@ The 8-minute [tutorial video](https://www.youtube.com/watch?v=kbKtFN71Lfs) *Chao
 4.  Draw the point half distance between the current point and the chosen vertex.
 5.  Repeat from step 3.
 
-Outline of Script
------------------
+Outline
+-------
 
-I kick off this script with a well-know fractal: the Sierpinski Gasket. I write a function that uses the chaos game to generate it and then experiment with the parameters to vary the shape and patterns of the obtained figure I then generalize the function to generate fractals with any number of vertices before finishing the script with an adaptation of the chaos game that generates Barnsley Fern, another beautiful fractal.
+I kick off this script with a well-know fractal: the Sierpinski Gasket. I write a function that uses the chaos game to generate it and then experiment with the parameters to vary the shape and patterns of the obtained figure. I then generalize the function to generate fractals with any number of vertices before finishing the script with an adaptation of the chaos game that generates Barnsley Fern, another beautiful fractal.
 
-Sierpinski Gasket and Other Triangular Fractals
-===============================================
+Triangular Fractals (Sierpinski Gasket and Others)
+==================================================
 
 The Function `generate_sg()`
 ----------------------------
 
-We design the function `generate_sg()` that uses the chaos game to generate a Sierpinski Gasket.
+We create the function `generate_sg()` which uses the chaos game to generate a Sierpinski Gasket.
 
 ``` r
 generate_sg <- function(
@@ -121,7 +121,7 @@ generate_sg <- function(
 }
 ```
 
-We can simplify the loop of the function `generate_sg` to speed it up.
+We can simplify the loop of the for-function `generate_sg()` to speed it up.
 
 ``` r
 generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/2), 
@@ -163,8 +163,8 @@ generate_sg(title = "Sierpinski Gasket", subtitle = "(10,000 iterations)")
 
 <img src="Script_files/figure-markdown_github/sg default-1.png" style="display: block; margin: auto;" />
 
-Other Triangular Fractals
--------------------------
+Experimenting
+-------------
 
 We can generate triangular fractals with various shapes and patterns by varying the parameters of the function `generate_sg()`. First, by changing the value of `p`, we generate fractals with different patterns.
 
@@ -178,7 +178,7 @@ for(p in c(0.1, 0.2, 0.3, 0.45, 0.5, 0.55, 0.7, 0.8, 0.9, 0.95))
 
 It seems that for `p` superior to `0.5`, larger values give figures that are more chaotic.
 
-Second, we can also randomly determine the location of the vertices to obtain different triangular figures.
+Second, we can randomly determine the location of the vertices to obtain different triangular figures.
 
 ``` r
 for(seed in c(123 : 125)){
@@ -203,19 +203,19 @@ generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2),
 
 <img src="Script_files/figure-markdown_github/sg n-1.png" style="display: block; margin: auto;" />
 
-Finally, changing the location of the initial point does not significantly alter the outcome: the sequence of points rapidly follows the regular pattern.
+Finally, changing the location of the initial point does not significantly alter the outcome of teh chaos game: the sequence of points rapidly follows the regular pattern.
 
 ``` r
 set.seed(125)
 generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2),
             initial_point = c(3, 3),
-            subtitle = "Initial point located outisde of vertices")
+            subtitle = "Initial point located at (3, 3) (outside of vertices)")
 ```
 
 <img src="Script_files/figure-markdown_github/sg i_p-1.png" style="display: block; margin: auto;" />
 
-General Formula
-===============
+Fractals with *k* Vertices
+==========================
 
 The Function `generate_fractal()`
 ---------------------------------
@@ -227,7 +227,8 @@ One could also be interested in generating fractals with more vertices. The func
 -   `x` and `y` determine the x- and y-coordinates of the fractal's vertices. If the arguments `x` and `y` are left to `NULL`, then the coordinates are randomly generated.
 
 ``` r
-generate_fractal <- function(n = 1e4, k = 4, x = NULL, y = NULL, p = 0.5, title = NULL, subtitle = NULL){
+generate_fractal <- function(n = 1e4, p = 0.5, title = NULL, subtitle = NULL, 
+                             k = 4, x = NULL, y = NULL){
   
   
   #
@@ -345,7 +346,8 @@ The function `generate_bf()` uses an adaptation of the chaos game to generate a 
 -   `proba` gives the probability of applying each of the four transformations to the point. Each transformation has an element of Barnsley Fern associated to it: the stem, the leaves' end, the fern's left-hand side and the fern's right-hand side.
 
 ``` r
-generate_bf <- function(n = 1e4, proba = c(0.01, 0.85, 0.07, 0.07), title = NULL, subtitle = NULL){
+generate_bf <- function(n = 1e4, title = NULL, subtitle = NULL,
+                        proba = c(0.01, 0.85, 0.07, 0.07)){
   
   
   #
@@ -413,7 +415,7 @@ generate_bf(title = "Barnsley Fern", subtitle = "10,000 iterations")
 Experimenting
 -------------
 
-Changing the probabilities in `proba` changes the distribution of the points among the different elements of the fern (stem, leaves' end, and left- and right-hand sides). If we set one of the elements of `proba` to `0`, it leaves the associated element of the fern blank.
+Changing the probabilities in `proba` changes the distribution of the points among the different elements of the fern (stem, leaves' end, and left- and right-hand sides). If we set an element of `proba` to `0`, it leaves the associated element of the fern blank.
 
 ``` r
 proba     <- c(0.01, 0.85, 0.07, 0.07)
