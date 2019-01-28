@@ -57,10 +57,12 @@ generate_sg <- function(
   
   ){
   
+  
   #
   # Setup
   points         <- data.frame(x = numeric(0), y = numeric(0))
   point_previous <- initial_point
+  
   
   #
   # Chaos Game
@@ -77,6 +79,7 @@ generate_sg <- function(
     
   }
   
+  
   #
   # Plot
   g <- ggplot(points, aes(x, y)) +
@@ -86,6 +89,8 @@ generate_sg <- function(
     theme(plot.title    = element_text(hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5))
   
+  
+  #
   # Save and return plot
   ggsave(paste("Triangular Fractal with p =", p, ".jpeg"),
          width = 4, height = 2 * sqrt(3), path = "Plots")
@@ -103,6 +108,7 @@ generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/
   points      <- data.frame(x = numeric(0), y = numeric(0))
   points[1, ] <- initial_point
   
+  
   #
   # Faster loop
   for(i in 1 : n){
@@ -110,8 +116,9 @@ generate_sg <- function(n = 1e4, v1 = c(0,0), v2 = c(1, 0), v3 = c(0.5, sqrt(3)/
     points[i + 1, ] <-      p  * points[i, ] +
                        (1 - p) * sample(list(v1, v2, v3), size = 1)[[1]]
     
-  }
+  } # close loop
 
+  
   g <- ggplot(points, aes(x, y)) +
     geom_point(shape = ".") +
     labs(title = title, subtitle = subtitle) + 
@@ -146,15 +153,14 @@ It seems that for `p` superior to `0.5`, larger values give figures that are mor
 
 Second, we can also randomly determine the location of the vertices to obtain different triangular figures.
 
-```{r sg v, fig.height = 3, fig.width = 3, fig.align = 'center', cache = TRUE}
-set.seed(123)
-generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2), subtitle = "Vertices randomly located")
-
-set.seed(124)
-generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2), subtitle = "Vertices randomly located")
-
-set.seed(125)
-generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2), subtitle = "Vertices randomly located")
+```{r sg v, fig.height = 2.5, fig.width = 2.5, fig.align = 'center', cache = TRUE}
+for(seed in c(123 : 125)){
+  
+  set.seed(seed)
+  
+  print(generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2), subtitle = "Vertices randomly located"))
+  
+}
 ```
 
 Third, by increasing the number of iterations, we generate a figure with a sharper pattern.
@@ -178,7 +184,7 @@ generate_sg(v1 = runif(2), v2 = runif(2), v3 = runif(2),
 
 # General Formula
 
-## The Function
+## The Function `generate_fractal()`
 One could also be interested in generating fractals with more vertices. The function `generate_fractal()` is a generalization of `generate_sg()` that produces fractals with any number of vertices. It has the same arguments as `generate_sg()` at the exception of:
 
 * `k` determines the number of vertices of the fractal.
@@ -188,6 +194,9 @@ One could also be interested in generating fractals with more vertices. The func
 ```{r generate_fractal}
 generate_fractal <- function(n = 1e4, k = 4, x = NULL, y = NULL, p = 0.5, title = NULL, subtitle = NULL){
   
+  
+  #
+  # Setup
   if(is.null(x)){ x <- runif(k)}
   if(is.null(y)){ y <- runif(k)}
   
@@ -195,6 +204,9 @@ generate_fractal <- function(n = 1e4, k = 4, x = NULL, y = NULL, p = 0.5, title 
   
   point <- c(x[1], y[1])
   
+  
+  #
+  # Chaos Game
   for(i in 1:n){
     
     m      <- sample(1 : length(x), size = 1)
@@ -206,6 +218,9 @@ generate_fractal <- function(n = 1e4, k = 4, x = NULL, y = NULL, p = 0.5, title 
     
   }
   
+  
+  #
+  # Plot
   g <- ggplot(points, aes(x, y)) +
     geom_point(shape = ".") +
     labs(title = title, subtitle = subtitle) + 
@@ -213,6 +228,9 @@ generate_fractal <- function(n = 1e4, k = 4, x = NULL, y = NULL, p = 0.5, title 
     theme(plot.title = element_text(hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5))
     
+  
+  #
+  # Output
   ggsave(paste("k =", k, "and p =", p, ".jpeg"), width = 4, height = 4, path = "Plots")
   return(g)
   
@@ -221,7 +239,7 @@ generate_fractal <- function(n = 1e4, k = 4, x = NULL, y = NULL, p = 0.5, title 
 
 ## Experimenting
 
-With its parameters left to their default value, the function generates a quadrilateral figure with its vertices randomly located.
+With its default arguments, the function generates a quadrilateral figure with its vertices randomly located.
 
 ```{r fractal default, fig.height = 2, fig.width = 3, fig.align = 'center', cache = TRUE}
 set.seed(123)
@@ -239,19 +257,20 @@ Surprisingly, unlike the previous quadrilateral figure, the square fractal does 
 for(p in c(0.1, 0.2, 0.3, 0.45, 0.49, 0.5, 0.55, 0.7, 0.9))
   
   print(generate_fractal(x = c(0,0,1,1), y = c(0,1,0,1),     
-                         p = p, subtitle = paste("p =", p)))
+                         p = p,
+                         subtitle = paste("p =", p)))
 ```
 
 It seems that for square fractals, values of `p` equal or superior to `0.5` generates figures with no apparent pattern.
 
 Changing the value of the argument `k` generates fractals with different numbers of vertices.
 
-```{r fractal k, fig.height = 2, fig.width = 3, fig.align = 'center', cache = TRUE}
+```{r fractal k, fig.height = 2.5, fig.width = 2.5, fig.align = 'center', cache = TRUE}
 ks    <- c(3  , 4   , 5  , 7   )
 seeds <- c(1  , 12  , 121, 241 )
 ps    <- c(0.5, 0.45, 0.4, 0.35)
 
-for(i in 1:length(ks)){
+for(i in 1 : length(ks)){
   
   k    <- ks[i]
   seed <- seeds[i]
@@ -271,14 +290,17 @@ I want to conclude this script with an adaptation of the chaos game that generat
 
 ![Barnsley Fern](Plots/Barnsley Fern sharp.jpeg){width=250px, height=250px}
 
-## The Function
+## The Function `generate_bf()`
 The function `generate_bf()` uses an adaptation of the chaos game to generate a Barnsley Fern. The iterative mechanism of `generate_bf()` is fundamentally the same as that of `generate_fractal()` and `generate_sg()`: given a point, we randomly apply to its coordinates a transformation from a given set to generate the next point. For the function `generate_bf()`, we apply one of four affine transformations. These four transformation are captured in the four rows of the matrices `M1` and `M2`. I obtained the values for the entries of these matrices from Mr. Barnsley's book `Fractals Everywhere` (p.86, table III.3. *IFS code for a fern*). For clarity, I decided to split the table from Mr. Barnsley's book into two matrices. The function `generate_bf()` has the same arguments as `generate_sg()` and `generate_fractal()` at the exception of:
 
-* `proba` gives the probability of applying each of the `4` transformations to the point. Each transformation has an associated element on the plot: the stem, the leaves' end, the fern's left-hand side and the fern's right-hand side.
+* `proba` gives the probability of applying each of the four transformations to the point. Each transformation has an element of Barnsley Fern associated to it: the stem, the leaves' end, the fern's left-hand side and the fern's right-hand side.
 
 ```{r, generate_bf}
 generate_bf <- function(n = 1e4, proba = c(0.01, 0.85, 0.07, 0.07), title = NULL, subtitle = NULL){
   
+  
+  #
+  # Setup
   M1 <- matrix(
     c(0    , 0    , 0    , 0.16,
       0.85 , 0.04 , -0.04, 0.85,
@@ -294,21 +316,27 @@ generate_bf <- function(n = 1e4, proba = c(0.01, 0.85, 0.07, 0.07), title = NULL
       0, 1.60,
       0, 0.44),
     byrow = TRUE, 
-    ncol = 2)
+    ncol = 2
+    )
   
   points <- data.frame(x = numeric(0), y = numeric(0))
   
   point <- c(0, 0)
   
   
+  #
+  # Chaos Game
   for(i in 1 : n){
     
     k           <- sample(1 : 4, size = 1, prob = proba)
-    point       <- matrix(M1[k, ], byrow = T, ncol = 2) %*% point + M2[k, ]
+    point       <- matrix(M1[k, ], byrow = TRUE, ncol = 2) %*% point + M2[k, ]
     points[i, ] <- point
     
   }
   
+  
+  #
+  # Plot
   g <- ggplot(points, aes(x, y)) +
     geom_point(shape = ".") +
     labs(title = title, subtitle = subtitle) + 
@@ -317,13 +345,14 @@ generate_bf <- function(n = 1e4, proba = c(0.01, 0.85, 0.07, 0.07), title = NULL
           plot.subtitle = element_text(hjust = 0.5))
     
   
+  # Output
   ggsave("Barnsley Fern.jpeg", width = 3, height = 3, path = "Plots")
   return(g)
   
 }
 ```
 
-With its parameters left to their default value, the function generates Barnsley Fern.
+With its default arguments, the function generates the Barnsley Fern.
 
 ```{r bf default, fig.height = 2, fig.width = 2.5, fig.align = 'center'}
 generate_bf(title = "Barnsley Fern", subtitle = "10,000 iterations")
@@ -335,10 +364,10 @@ Changing the probabilities in `proba` changes the distribution of the points amo
 ```{r bf proba I, fig.height = 2.5, fig.width = 4, fig.align = 'center', cache = TRUE}
 
 proba     <- c(0.01, 0.85, 0.07, 0.07)
-subtitles <- c("1st element of `proba` is null: blank stem"           ,
-               "2nd element of `proba` is null: no result",
-               "3rd element of `proba` is null: blank left-hand side",
-               "4th element of `proba` is null: blank right-hand side")
+subtitles <- c("1st element of proba is null: blank stem"           ,
+               "2nd element of proba is null: no result"            ,
+               "3rd element of proba is null: blank left-hand side" ,
+               "4th element of proba is null: blank right-hand side")
 
 for(i in 1:4){
   
@@ -355,21 +384,21 @@ for(i in 1:4){
 
 On the contrary, if we increase the value of an element of `proba`, we make the associated element of the fern more pronounced.
 
-```{r bf proba II, fig.height = 2.5, fig.width = 4, fig.align = 'center', cache = TRUE}
-m <- 3
+```{r bf proba II, fig.height = 2.5, fig.width = 4.25, fig.align = 'center', cache = TRUE}
+
 proba     <- c(0.01, 0.85, 0.07, 0.07)
-subtitles <- c("1st element of `proba` is increased: stem more pronounced"           ,
-               "2nd element of `proba` is increased: leaves' ends more pronounced"  ,
-               "3rd element of `proba` is increased: left-hand side more pronounced",
-               "4th element of `proba` is increased: right-hand side more pronounced")
+subtitles <- c("Increased 1st element of proba: stem more pronounced"           ,
+               "Increased 2nd element of proba: leaves' ends more pronounced"   ,
+               "Increased 3rd element of proba: left-hand side more pronounced" ,
+               "Increased 4th element of proba: right-hand side more pronounced")
 
 for(i in 1:4){
   
-  proba_blank    <- proba
-  proba_blank[i] <- proba_blank[i] * m
-  subtitle       <- subtitles[i]
+  proba_increase    <- proba
+  proba_increase[i] <- proba_increase[i] * 3 # Increase element of proba by a factor of 3.
+  subtitle          <- subtitles[i]
   
-  print(generate_bf(proba    = proba_blank,
+  print(generate_bf(proba    = proba_increase,
                     title    = "Barnsley Fern",
                     subtitle = subtitle))
   
@@ -377,4 +406,4 @@ for(i in 1:4){
 ```
 
 # Summary
-I designed three functions `generate_sg()`, `generate_fractal()` and `generate_bf()` that respectively generate the Sierpinski Gasket, fractals with any number of vertices and the Barnsley Fern. Each function has parameters that allow us to tweak the shape and pattern of the obtained fractal. Most important is the argument `p` of the functions `generate_sg` and `generate_fractal` which determines whether the figure is a fractal with a clear pattern or a chaotic  bunch of points.
+I designed three functions `generate_sg()`, `generate_fractal()` and `generate_bf()` that respectively generate the Sierpinski Gasket, fractals with any number of vertices and the Barnsley Fern. Each function has parameters that allow us to tweak the shape and pattern of the obtained fractal. Most important is the argument `p` of the functions `generate_sg()` and `generate_fractal()` which determines whether the obtained figure is a fractal or a bunch of points with no clear pattern.
