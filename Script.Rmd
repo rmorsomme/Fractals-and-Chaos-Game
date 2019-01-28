@@ -20,7 +20,7 @@ Fractals are complex mathematical objects. In this script, it is sufficient to u
 ![Sierpinski Gasket](Plots/Sierpinski Gasket.jpeg){height=250px, width=250px}
 
 ## The Chaos Game
-The 8-minute [tutorial](https://www.youtube.com/watch?v=kbKtFN71Lfs) *Chaos Game* by Numberphile does a much better job at explaining the choas game than I possibly could, so I recommend the reader to simply watch it to understand how the method works. To generate the Sierpinski Gasket with the chaos game, we follow 5 steps:
+The 8-minute [tutorial video](https://www.youtube.com/watch?v=kbKtFN71Lfs) *Chaos Game* by Numberphile does a much better job at explaining the choas game than I possibly could, so I recommend the reader to simply watch it to understand how the method works. To generate the Sierpinski Gasket with the chaos game, we follow 5 steps:
 
 1. Take three points in a plane. These will be the vertices of the final fractal.
 2. Choose a point in the plane and draw it.
@@ -91,7 +91,7 @@ generate_sg <- function(
   
   
   #
-  # Save and return plot
+  # Output
   ggsave(paste("Triangular Fractal with p =", p, ".jpeg"),
          width = 4, height = 2 * sqrt(3), path = "Plots")
   return(g)
@@ -345,6 +345,7 @@ generate_bf <- function(n = 1e4, proba = c(0.01, 0.85, 0.07, 0.07), title = NULL
           plot.subtitle = element_text(hjust = 0.5))
     
   
+  #
   # Output
   ggsave("Barnsley Fern.jpeg", width = 3, height = 3, path = "Plots")
   return(g)
@@ -361,7 +362,7 @@ generate_bf(title = "Barnsley Fern", subtitle = "10,000 iterations")
 ## Experimenting
 Changing the probabilities in `proba` changes the distribution of the points among the different elements of the fern (stem, leaves' end, and left- and right-hand sides). If we set one of the elements of `proba` to `0`, it leaves the associated element of the fern blank.
 
-```{r bf proba I, fig.height = 2.5, fig.width = 4, fig.align = 'center', cache = TRUE}
+```{r bf proba I, fig.height = 2.5, fig.width = 3.85, fig.align = 'center', cache = TRUE}
 
 proba     <- c(0.01, 0.85, 0.07, 0.07)
 subtitles <- c("1st element of proba is null: blank stem"           ,
@@ -369,7 +370,7 @@ subtitles <- c("1st element of proba is null: blank stem"           ,
                "3rd element of proba is null: blank left-hand side" ,
                "4th element of proba is null: blank right-hand side")
 
-for(i in 1:4){
+for(i in 1 : 4){
   
   proba_blank    <- proba
   proba_blank[i] <- 0
@@ -384,15 +385,15 @@ for(i in 1:4){
 
 On the contrary, if we increase the value of an element of `proba`, we make the associated element of the fern more pronounced.
 
-```{r bf proba II, fig.height = 2.5, fig.width = 4.25, fig.align = 'center', cache = TRUE}
+```{r bf proba II, fig.height = 2.5, fig.width = 4.35, fig.align = 'center', cache = TRUE}
 
 proba     <- c(0.01, 0.85, 0.07, 0.07)
-subtitles <- c("Increased 1st element of proba: stem more pronounced"           ,
-               "Increased 2nd element of proba: leaves' ends more pronounced"   ,
-               "Increased 3rd element of proba: left-hand side more pronounced" ,
-               "Increased 4th element of proba: right-hand side more pronounced")
+subtitles <- c("Larger 1st element of proba: sharper stem"           ,
+               "Larger 2nd element of proba: sharper leaves' ends"   ,
+               "Larger 3rd element of proba: sharper left-hand side" ,
+               "Larger 4th element of proba: sharper right-hand side")
 
-for(i in 1:4){
+for(i in 1 : 4){
   
   proba_increase    <- proba
   proba_increase[i] <- proba_increase[i] * 3 # Increase element of proba by a factor of 3.

@@ -113,7 +113,7 @@ generate_sg <- function(
   
   
   #
-  # Save and return plot
+  # Output
   ggsave(paste("Triangular Fractal with p =", p, ".jpeg"),
          width = 4, height = 2 * sqrt(3), path = "Plots")
   return(g)
