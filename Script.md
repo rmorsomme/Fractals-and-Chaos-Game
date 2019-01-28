@@ -37,7 +37,7 @@ Fractals are complex mathematical objects. In this script, it is sufficient to u
 The Chaos Game
 --------------
 
-The 8-minute [tutorial](https://www.youtube.com/watch?v=kbKtFN71Lfs) *Chaos Game* by Numberphile does a much better job at explaining the choas game than I possibly could, so I recommend the reader to simply watch it to understand how the method works. To generate the Sierpinski Gasket with the chaos game, we follow 5 steps:
+The 8-minute [tutorial video](https://www.youtube.com/watch?v=kbKtFN71Lfs) *Chaos Game* by Numberphile does a much better job at explaining the choas game than I possibly could, so I recommend the reader to simply watch it to understand how the method works. To generate the Sierpinski Gasket with the chaos game, we follow 5 steps:
 
 1.  Take three points in a plane. These will be the vertices of the final fractal.
 2.  Choose a point in the plane and draw it.
