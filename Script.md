@@ -441,10 +441,10 @@ On the contrary, if we increase the value of an element of `proba`, we make the 
 
 ``` r
 proba     <- c(0.01, 0.85, 0.07, 0.07)
-subtitles <- c("Larger 1st element of proba: stem more pronounced"           ,
-               "Larger 2nd element of proba: leaves' ends more pronounced"   ,
-               "Larger 3rd element of proba: left-hand side more pronounced" ,
-               "Larger 4th element of proba: right-hand side more pronounced")
+subtitles <- c("Larger 1st element of proba: sharper stem"           ,
+               "Larger 2nd element of proba: sharper leaves' ends"   ,
+               "Larger 3rd element of proba: sharper left-hand side" ,
+               "Larger 4th element of proba: sharper right-hand side")
 
 for(i in 1 : 4){
   
