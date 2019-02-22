@@ -1,7 +1,7 @@
 Fractals - Choas Game
 ================
 Raphaël Morsomme
-2019-01-28
+2019-02-22
 
 -   [Introduction](#introduction)
     -   [Fractals](#fractals)
